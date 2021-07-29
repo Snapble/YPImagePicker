@@ -9,19 +9,23 @@
 import UIKit
 import Photos
 import PryntTrimmerView
+import MetalPetal
 import MetalFilters
+import VideoIO
 
 public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
     
     @IBOutlet weak var trimBottomItem: YPMenuItem!
     @IBOutlet weak var coverBottomItem: YPMenuItem!
+    @IBOutlet weak var filterBottomItem: YPMenuItem!
     
     @IBOutlet weak var videoView: YPVideoView!
     @IBOutlet weak var trimmerView: TrimmerView!
+    @IBOutlet weak var filterCollectionView: UICollectionView!
     
     @IBOutlet weak var coverImageView: UIImageView!
     @IBOutlet weak var coverThumbSelectorView: ThumbSelectorView!
-
+    
     public var inputVideo: YPMediaVideo!
     public var inputAsset: AVAsset { return AVAsset(url: inputVideo.url) }
     
@@ -31,7 +35,16 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
     
     var didSave: ((YPMediaItem) -> Void)?
     var didCancel: (() -> Void)?
-
+    
+    // For filter function
+    fileprivate var allFilters: [MTFilter.Type] = MTFilterManager.shared.allFilters
+    fileprivate var thumbnails: [String: UIImage] = [:]
+    
+    fileprivate var selectedFilter: MTFilter?
+    fileprivate var currentlySelectedImageThumbnail: UIImage? // Used for comparing with original image when tapped
+    
+    private var videoComposition: VideoComposition<BlockBasedVideoCompositor>?
+    
     /// Designated initializer
     public class func initWith(video: YPMediaVideo,
                                isFromSelectionVC: Bool) -> YPVideoFiltersVC {
@@ -43,11 +56,10 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
     }
     
     // MARK: - Live cycle
-
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = YPConfig.colors.filterBackgroundColor
+        
         trimmerView.mainColor = YPConfig.colors.trimmerMainColor
         trimmerView.handleColor = YPConfig.colors.trimmerHandleColor
         trimmerView.positionBarColor = YPConfig.colors.positionLineColor
@@ -58,9 +70,15 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         
         trimBottomItem.textLabel.text = YPConfig.wordings.trim
         coverBottomItem.textLabel.text = YPConfig.wordings.cover
-
+        filterBottomItem.textLabel.text = YPConfig.wordings.filter
+        
         trimBottomItem.button.addTarget(self, action: #selector(selectTrim), for: .touchUpInside)
         coverBottomItem.button.addTarget(self, action: #selector(selectCover), for: .touchUpInside)
+        filterBottomItem.button.addTarget(self, action: #selector(selectFilter), for: .touchUpInside)
+        filterCollectionView.register(FilterPickerCell.self, forCellWithReuseIdentifier: NSStringFromClass(FilterPickerCell.self))
+        filterCollectionView.collectionViewLayout = self.layout()
+        filterCollectionView.delegate = self
+        filterCollectionView.dataSource = self
         
         // Remove the default and add a notification to repeat playback from the start
         videoView.removeReachEndObserver()
@@ -85,6 +103,23 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
             navigationItem.leftBarButtonItem?.setFont(font: YPConfig.fonts.leftBarButtonFont, forState: .normal)
         }
         setupRightBarButtonItem()
+        generateFilterThumbnails()
+        
+        selectFilter()
+        videoView.loadVideo(inputVideo)
+    }
+    
+    fileprivate func thumbFromImage(_ img: UIImage) -> CIImage {
+        let k = img.size.width / img.size.height
+        let scale = UIScreen.main.scale
+        let thumbnailHeight: CGFloat = 300 * scale
+        let thumbnailWidth = thumbnailHeight * k
+        let thumbnailSize = CGSize(width: thumbnailWidth, height: thumbnailHeight)
+        UIGraphicsBeginImageContext(thumbnailSize)
+        img.draw(in: CGRect(x: 0, y: 0, width: thumbnailSize.width, height: thumbnailSize.height))
+        let smallImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return smallImage!.toCIImage()!
     }
     
     override public func viewDidAppear(_ animated: Bool) {
@@ -94,9 +129,9 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         coverThumbSelectorView.asset = inputAsset
         coverThumbSelectorView.delegate = self
         
-        selectTrim()
-        videoView.loadVideo(inputVideo)
-
+        //        selectFilter()
+        //        videoView.loadVideo(inputVideo)
+        
         super.viewDidAppear(animated)
     }
     
@@ -116,41 +151,109 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         navigationItem.rightBarButtonItem?.setFont(font: YPConfig.fonts.rightBarButtonFont, forState: .normal)
     }
     
+    fileprivate func generateFilterThumbnails() {
+        DispatchQueue.global().async {
+            
+            let size = CGSize(width: 200, height: 200)
+            UIGraphicsBeginImageContextWithOptions(size, false, 0)
+            self.inputVideo.thumbnail.draw(in: CGRect(origin: .zero, size: size))
+            let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            if let image = scaledImage {
+                for filter in self.allFilters {
+                    let image = MTFilterManager.shared.generateThumbnailsForImage(image, with: filter)
+                    self.thumbnails[filter.name] = image
+                    DispatchQueue.main.async {
+                        self.filterCollectionView.reloadData()
+                    }
+                }
+            }
+        }
+    }
+    
     // MARK: - Top buttons
-
+    
     @objc public func save() {
+        videoView.stopDisplayLink()
         guard let didSave = didSave else { return print("Don't have saveCallback") }
         navigationItem.rightBarButtonItem = YPLoaders.defaultLoader
-
+        let context = try! MTIContext(device: MTLCreateSystemDefaultDevice()!)
         do {
             let asset = AVURLAsset(url: inputVideo.url)
             let trimmedAsset = try asset
                 .assetByTrimming(startTime: trimmerView.startTime ?? CMTime.zero,
                                  endTime: trimmerView.endTime ?? inputAsset.duration)
-            
-            // Looks like file:///private/var/mobile/Containers/Data/Application
-            // /FAD486B4-784D-4397-B00C-AD0EFFB45F52/tmp/8A2B410A-BD34-4E3F-8CB5-A548A946C1F1.mov
-            let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory())
+            let outputURL = URL(fileURLWithPath: NSTemporaryDirectory())
                 .appendingUniquePathComponent(pathExtension: YPConfig.video.fileType.fileExtension)
+            // MARK: - TOFIX
+//            let outputURL = URL(fileURLWithPath: FileManager.default.documentDirectoryPath)
+//            .appendingUniquePathComponent(pathExtension: YPConfig.video.fileType.fileExtension)
+            let fileManager = FileManager()
+            try? fileManager.removeItem(at: outputURL)
             
-            _ = trimmedAsset.export(to: destinationURL) { [weak self] session in
-                switch session.status {
-                case .completed:
-                    DispatchQueue.main.async {
-                        if let coverImage = self?.coverImageView.image {
-                            let resultVideo = YPMediaVideo(thumbnail: coverImage,
-														   videoURL: destinationURL,
-														   asset: self?.inputVideo.asset)
-                            didSave(YPMediaItem.video(v: resultVideo))
-                            self?.setupRightBarButtonItem()
-                        } else {
-                            print("YPVideoFiltersVC -> Don't have coverImage.")
-                        }
+            if let filter = selectedFilter {
+                let handler = MTIAsyncVideoCompositionRequestHandler(context: context, tracks: trimmedAsset.tracks(withMediaType: .video)) { [weak self] request in
+                    guard self != nil else {
+                        //TODO: resolve force unwrap
+                        return request.anySourceImage!
                     }
-                case .failed:
-                    print("YPVideoFiltersVC Export of the video failed. Reason: \(String(describing: session.error))")
-                default:
-                    print("YPVideoFiltersVC Export session completed with \(session.status) status. Not handled")
+                    return FilterGraph.makeImage { output in
+                        //TODO: resolve force unwrap
+                        request.anySourceImage! => filter => output
+                        }!
+                }
+                let composition = VideoComposition(propertiesOf: asset, compositionRequestHandler: handler.handle(request:))
+                self.videoComposition = composition
+                var configuration = AssetExportSession.Configuration(fileType: AssetExportSession.fileType(for: outputURL)!, videoSettings: .h264(videoSize: videoComposition!.renderSize), audioSettings: .aac(channels: 2, sampleRate: 44100, bitRate: 128 * 1000))
+                configuration.videoComposition = videoComposition!.makeAVVideoComposition()
+                let exporter = try! AssetExportSession(asset: asset, outputURL: outputURL, configuration: configuration)
+                exporter.export(progress: { p in },
+                                completion: { [weak self] error in
+                                    // Remove input file
+                                    if let inputVideoUrl = self?.inputVideo.url {
+                                        try? fileManager.removeItem(at: inputVideoUrl)
+                                    }
+                                    if error != nil {
+                                        print("YPVideoFiltersVC -> Export video error \(error.debugDescription)")
+                                    }
+                                    else {
+                                        DispatchQueue.main.async {
+                                            if let coverImage = self?.coverImageView.image {
+                                                let resultVideo = YPMediaVideo(thumbnail: coverImage,
+                                                                               videoURL: outputURL,
+                                                                               asset: self?.inputVideo.asset)
+                                                didSave(YPMediaItem.video(v: resultVideo))
+                                                self?.setupRightBarButtonItem()
+                                            } else {
+                                                print("YPVideoFiltersVC -> Don't have coverImage.")
+                                            }
+                                        }
+                                    }
+                                })
+            }
+            else {
+                _ = trimmedAsset.export(to: outputURL) { [weak self] session in
+                    switch session.status {
+                    case .completed:
+                        if let inputVideoUrl = self?.inputVideo.url {
+                            try? fileManager.removeItem(at: inputVideoUrl)
+                        }
+                        DispatchQueue.main.async {
+                            if let coverImage = self?.coverImageView.image {
+                                let resultVideo = YPMediaVideo(thumbnail: coverImage,
+                                                               videoURL: outputURL,
+                                                               asset: self?.inputVideo.asset)
+                                didSave(YPMediaItem.video(v: resultVideo))
+                                self?.setupRightBarButtonItem()
+                            } else {
+                                print("YPVideoFiltersVC -> Don't have coverImage.")
+                            }
+                        }
+                    case .failed:
+                        print("YPVideoFiltersVC Export of the video failed. Reason: \(String(describing: session.error))")
+                    default:
+                        print("YPVideoFiltersVC Export session completed with \(session.status) status. Not handled")
+                    }
                 }
             }
         } catch let error {
@@ -158,27 +261,49 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         }
     }
     
+    //    func update(asset: AVAsset){
+    //        let handler = MTIAsyncVideoCompositionRequestHandler(context: context, tracks: asset.tracks(withMediaType: .video)) { [weak self] request in
+    //            guard let `self` = self else {
+    //                return request.anySourceImage
+    //            }
+    //            return FilterGraph.makeImage { output in
+    //                request.anySourceImage => self.videoFilter => output
+    //                }!
+    //        }
+    //        let composition = VideoComposition(propertiesOf: asset, compositionRequestHandler: handler.handle(request:))
+    //
+    //        let playerItem = AVPlayerItem(asset: asset)
+    //        playerItem.videoComposition = composition.makeAVVideoComposition()
+    //        self.player.replaceCurrentItem(with: playerItem)
+    //        self.asset = asset
+    //        self.videoComposition = composition
+    //        exportVideo()
+    //    }
+    
     @objc func cancel() {
         didCancel?()
     }
     
     // MARK: - Bottom buttons
-
+    
     @objc public func selectTrim() {
         title = YPConfig.wordings.trim
         
+        filterBottomItem.deselect()
         trimBottomItem.select()
         coverBottomItem.deselect()
-
+        
         trimmerView.isHidden = false
         videoView.isHidden = false
         coverImageView.isHidden = true
         coverThumbSelectorView.isHidden = true
+        filterCollectionView.isHidden = true
     }
     
     @objc public func selectCover() {
         title = YPConfig.wordings.cover
         
+        filterBottomItem.deselect()
         trimBottomItem.deselect()
         coverBottomItem.select()
         
@@ -186,13 +311,31 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
         videoView.isHidden = true
         coverImageView.isHidden = false
         coverThumbSelectorView.isHidden = false
+        filterCollectionView.isHidden = true
+        
+        stopPlaybackTimeChecker()
+        videoView.stop()
+    }
+    
+    @objc public func selectFilter() {
+        title = YPConfig.wordings.filter
+        
+        filterBottomItem.select()
+        trimBottomItem.deselect()
+        coverBottomItem.deselect()
+        
+        trimmerView.isHidden = true
+        videoView.isHidden = false
+        coverImageView.isHidden = true
+        coverThumbSelectorView.isHidden = true
+        filterCollectionView.isHidden = false
         
         stopPlaybackTimeChecker()
         videoView.stop()
     }
     
     // MARK: - Various Methods
-
+    
     // Updates the bounds of the cover picker if the video is trimmed
     // TODO: Now the trimmer framework doesn't support an easy way to do this.
     // Need to rethink a flow or search other ways.
@@ -236,7 +379,7 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
     @objc func onPlaybackTimeChecker() {
         guard let startTime = trimmerView.startTime,
             let endTime = trimmerView.endTime else {
-            return
+                return
         }
         
         let playBackTime = videoView.player.currentTime()
@@ -274,5 +417,43 @@ extension YPVideoFiltersVC: ThumbSelectorViewDelegate {
             let imageRef = try? imageGenerator.copyCGImage(at: imageTime, actualTime: nil) {
             coverImageView.image = UIImage(cgImage: imageRef)
         }
+    }
+}
+
+
+extension YPVideoFiltersVC {
+    func layout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 4
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
+        layout.itemSize = CGSize(width: 100, height: 120)
+        return layout
+    }
+}
+
+extension YPVideoFiltersVC: UICollectionViewDataSource {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        //        return filteredThumbnailImagesArray.count
+        return allFilters.count
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(FilterPickerCell.self), for: indexPath) as! FilterPickerCell
+        let filter = allFilters[indexPath.item]
+        cell.update(filter)
+        cell.thumbnailImageView.image = thumbnails[filter.name]
+        return cell
+    }
+}
+
+extension YPVideoFiltersVC: UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let filter = allFilters[indexPath.item].init()
+        selectedFilter = filter
+        videoView.filter = filter
+        videoView.play()
+        currentlySelectedImageThumbnail = thumbnails[allFilters[indexPath.item].name]
+        self.coverImageView.image = currentlySelectedImageThumbnail
     }
 }
