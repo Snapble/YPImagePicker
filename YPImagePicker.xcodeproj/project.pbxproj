@@ -10,6 +10,8 @@
 		275A149626B3072F00EC7A8A /* MetalFilters.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 275A149326B3072F00EC7A8A /* MetalFilters.xcframework */; };
 		275A149726B3072F00EC7A8A /* PryntTrimmerView.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 275A149426B3072F00EC7A8A /* PryntTrimmerView.xcframework */; };
 		275A149826B3072F00EC7A8A /* Stevia.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 275A149526B3072F00EC7A8A /* Stevia.xcframework */; };
+		275A149D26B30E2200EC7A8A /* MetalPetal in Frameworks */ = {isa = PBXBuildFile; productRef = 275A149C26B30E2200EC7A8A /* MetalPetal */; };
+		275A149F26B3146E00EC7A8A /* VideoIO.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 275A149E26B3146E00EC7A8A /* VideoIO.xcframework */; };
 		321E6D87240CFABC00D76CD8 /* UINavigationBar+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321E6D86240CFABC00D76CD8 /* UINavigationBar+Extensions.swift */; };
 		327D7B592409510300B9C368 /* YPFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327D7B582409510300B9C368 /* YPFonts.swift */; };
 		327D7B69240CEF2F00B9C368 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327D7B68240CEF2F00B9C368 /* UIBarButtonItem+Extensions.swift */; };
@@ -108,6 +110,7 @@
 		275A149326B3072F00EC7A8A /* MetalFilters.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MetalFilters.xcframework; path = Carthage/Build/MetalFilters.xcframework; sourceTree = "<group>"; };
 		275A149426B3072F00EC7A8A /* PryntTrimmerView.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PryntTrimmerView.xcframework; path = Carthage/Build/PryntTrimmerView.xcframework; sourceTree = "<group>"; };
 		275A149526B3072F00EC7A8A /* Stevia.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Stevia.xcframework; path = Carthage/Build/Stevia.xcframework; sourceTree = "<group>"; };
+		275A149E26B3146E00EC7A8A /* VideoIO.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = VideoIO.xcframework; path = Carthage/Build/VideoIO.xcframework; sourceTree = "<group>"; };
 		321E6D86240CFABC00D76CD8 /* UINavigationBar+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+Extensions.swift"; sourceTree = "<group>"; };
 		327D7B582409510300B9C368 /* YPFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPFonts.swift; sourceTree = "<group>"; };
 		327D7B68240CEF2F00B9C368 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
@@ -228,9 +231,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				275A149F26B3146E00EC7A8A /* VideoIO.xcframework in Frameworks */,
 				275A149626B3072F00EC7A8A /* MetalFilters.xcframework in Frameworks */,
 				275A149826B3072F00EC7A8A /* Stevia.xcframework in Frameworks */,
 				275A149726B3072F00EC7A8A /* PryntTrimmerView.xcframework in Frameworks */,
+				275A149D26B30E2200EC7A8A /* MetalPetal in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,6 +409,7 @@
 		EB3251DE20878D5900A6190D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				275A149E26B3146E00EC7A8A /* VideoIO.xcframework */,
 				275A149326B3072F00EC7A8A /* MetalFilters.xcframework */,
 				275A149426B3072F00EC7A8A /* PryntTrimmerView.xcframework */,
 				275A149526B3072F00EC7A8A /* Stevia.xcframework */,
@@ -522,6 +528,9 @@
 			dependencies = (
 			);
 			name = YPImagePicker;
+			packageProductDependencies = (
+				275A149C26B30E2200EC7A8A /* MetalPetal */,
+			);
 			productName = Fusuma;
 			productReference = 52412A931CA6114A0073C4BE /* YPImagePicker.framework */;
 			productType = "com.apple.product-type.framework";
@@ -575,6 +584,9 @@
 				fa,
 			);
 			mainGroup = 52412A891CA6114A0073C4BE;
+			packageReferences = (
+				275A149B26B30E2200EC7A8A /* XCRemoteSwiftPackageReference "MetalPetal" */,
+			);
 			productRefGroup = 52412A941CA6114A0073C4BE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -795,7 +807,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -852,7 +864,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -886,7 +898,6 @@
 				);
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -924,7 +935,6 @@
 				);
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -963,6 +973,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		275A149B26B30E2200EC7A8A /* XCRemoteSwiftPackageReference "MetalPetal" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MetalPetal/MetalPetal";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.22.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		275A149C26B30E2200EC7A8A /* MetalPetal */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 275A149B26B30E2200EC7A8A /* XCRemoteSwiftPackageReference "MetalPetal" */;
+			productName = MetalPetal;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 52412A8A1CA6114A0073C4BE /* Project object */;
 }

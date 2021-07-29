@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="YPVideoFiltersVC" customModule="YPImagePicker" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="YPVideoFiltersVC" customModule="Camera" customModuleProvider="target">
             <connections>
                 <outlet property="coverBottomItem" destination="qy9-MY-67C" id="LaY-F2-uVO"/>
                 <outlet property="coverImageView" destination="daH-No-sZc" id="sNy-7V-7gV"/>
                 <outlet property="coverThumbSelectorView" destination="Tqq-Gf-aeR" id="CZG-rg-NWB"/>
+                <outlet property="filterBottomItem" destination="ukj-0p-JPr" id="zPT-Gj-1r8"/>
+                <outlet property="filterCollectionView" destination="03m-bs-V1X" id="khg-59-PYv"/>
                 <outlet property="trimBottomItem" destination="uB8-a7-Vh0" id="7Rn-9o-WWN"/>
                 <outlet property="trimmerView" destination="W4N-1E-jNP" id="a4g-Mg-65j"/>
                 <outlet property="videoView" destination="AFl-Bk-oPH" id="x8U-ib-yqT"/>
@@ -24,19 +26,24 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qy9-MY-67C" customClass="YPMenuItem" customModule="YPImagePicker" customModuleProvider="target">
-                    <rect key="frame" x="187.5" y="627" width="187.5" height="40"/>
-                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qy9-MY-67C" customClass="YPMenuItem" customModule="Camera" customModuleProvider="target">
+                    <rect key="frame" x="250" y="627" width="125" height="40"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="40" id="Ik5-9V-0hz"/>
                     </constraints>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uB8-a7-Vh0" customClass="YPMenuItem" customModule="YPImagePicker" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="627" width="187.5" height="40"/>
-                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uB8-a7-Vh0" customClass="YPMenuItem" customModule="Camera" customModuleProvider="target">
+                    <rect key="frame" x="125" y="627" width="125" height="40"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AFl-Bk-oPH" customClass="YPVideoView" customModule="YPImagePicker" customModuleProvider="target">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ukj-0p-JPr" userLabel="Filter Bottom Item" customClass="YPMenuItem" customModule="Camera" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="627" width="125" height="40"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AFl-Bk-oPH" customClass="YPVideoView" customModule="Camera" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="375"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="AFl-Bk-oPH" secondAttribute="height" multiplier="1:1" id="tL6-cM-ei5"/>
                     </constraints>
@@ -53,6 +60,19 @@
                         <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tqq-Gf-aeR" customClass="ThumbSelectorView" customModule="PryntTrimmerView">
                             <rect key="frame" x="30" y="84" width="315" height="84"/>
                         </view>
+                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="03m-bs-V1X">
+                            <rect key="frame" x="0.0" y="46" width="375" height="160"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="160" id="6qu-1F-ivS"/>
+                            </constraints>
+                            <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="gsw-zs-BPT">
+                                <size key="itemSize" width="50" height="50"/>
+                                <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            </collectionViewFlowLayout>
+                        </collectionView>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
@@ -62,30 +82,37 @@
                         <constraint firstItem="Tqq-Gf-aeR" firstAttribute="top" secondItem="W4N-1E-jNP" secondAttribute="top" id="T6m-tY-U37"/>
                         <constraint firstItem="W4N-1E-jNP" firstAttribute="centerY" secondItem="dMy-Fy-gyR" secondAttribute="centerY" id="Udn-il-obB"/>
                         <constraint firstItem="Tqq-Gf-aeR" firstAttribute="trailing" secondItem="W4N-1E-jNP" secondAttribute="trailing" id="bpp-dw-jOk"/>
+                        <constraint firstAttribute="trailing" secondItem="03m-bs-V1X" secondAttribute="trailing" id="lco-k0-I3n"/>
                         <constraint firstAttribute="trailing" secondItem="W4N-1E-jNP" secondAttribute="trailing" constant="30" id="nMz-fm-d4C"/>
+                        <constraint firstItem="03m-bs-V1X" firstAttribute="centerY" secondItem="dMy-Fy-gyR" secondAttribute="centerY" id="oDO-9T-ajN"/>
+                        <constraint firstItem="03m-bs-V1X" firstAttribute="leading" secondItem="dMy-Fy-gyR" secondAttribute="leading" id="oXe-Xq-AGo"/>
                         <constraint firstItem="Tqq-Gf-aeR" firstAttribute="bottom" secondItem="W4N-1E-jNP" secondAttribute="bottom" id="vGS-BO-IUw"/>
                     </constraints>
                 </view>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="uB8-a7-Vh0" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="CC1-rc-s2V"/>
+                <constraint firstItem="ukj-0p-JPr" firstAttribute="height" secondItem="qy9-MY-67C" secondAttribute="height" id="E7u-0Z-MGU"/>
                 <constraint firstItem="AFl-Bk-oPH" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="FRD-Vm-8CW"/>
-                <constraint firstItem="uB8-a7-Vh0" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Fzr-Gx-9yI"/>
+                <constraint firstItem="uB8-a7-Vh0" firstAttribute="leading" secondItem="ukj-0p-JPr" secondAttribute="trailing" id="Fzr-Gx-9yI"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="AFl-Bk-oPH" secondAttribute="trailing" id="HuF-V0-NP6"/>
                 <constraint firstItem="daH-No-sZc" firstAttribute="top" secondItem="AFl-Bk-oPH" secondAttribute="top" id="IXg-d6-twu"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="qy9-MY-67C" secondAttribute="bottom" id="K8l-EJ-kc2"/>
                 <constraint firstItem="daH-No-sZc" firstAttribute="bottom" secondItem="AFl-Bk-oPH" secondAttribute="bottom" id="MaG-K6-Aq8"/>
                 <constraint firstItem="qy9-MY-67C" firstAttribute="top" secondItem="dMy-Fy-gyR" secondAttribute="bottom" id="Qlv-q8-8Hh"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="qy9-MY-67C" secondAttribute="trailing" id="RdA-eh-2U7"/>
+                <constraint firstItem="ukj-0p-JPr" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="RzW-9N-7bm"/>
                 <constraint firstItem="AFl-Bk-oPH" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="SaE-kX-wSu"/>
                 <constraint firstItem="uB8-a7-Vh0" firstAttribute="height" secondItem="qy9-MY-67C" secondAttribute="height" id="dil-cq-CMa"/>
                 <constraint firstItem="dMy-Fy-gyR" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="ecA-Oe-ps4"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="dMy-Fy-gyR" secondAttribute="trailing" id="hyI-iq-qoa"/>
                 <constraint firstItem="qy9-MY-67C" firstAttribute="leading" secondItem="uB8-a7-Vh0" secondAttribute="trailing" id="i8m-ID-dah"/>
                 <constraint firstItem="daH-No-sZc" firstAttribute="leading" secondItem="AFl-Bk-oPH" secondAttribute="leading" id="mBO-x4-u0c"/>
+                <constraint firstItem="ukj-0p-JPr" firstAttribute="width" secondItem="qy9-MY-67C" secondAttribute="width" id="mwG-tU-aXv"/>
                 <constraint firstItem="daH-No-sZc" firstAttribute="trailing" secondItem="AFl-Bk-oPH" secondAttribute="trailing" id="ncu-ea-Qsv"/>
                 <constraint firstItem="uB8-a7-Vh0" firstAttribute="width" secondItem="qy9-MY-67C" secondAttribute="width" id="qhk-iL-B9n"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="ukj-0p-JPr" secondAttribute="bottom" id="s9S-0j-aNU"/>
                 <constraint firstItem="dMy-Fy-gyR" firstAttribute="top" secondItem="AFl-Bk-oPH" secondAttribute="bottom" id="zco-k3-gb7"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>

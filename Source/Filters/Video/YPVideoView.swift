@@ -9,21 +9,44 @@
 import UIKit
 import Stevia
 import AVFoundation
+import GLKit
+import Photos
+import MetalPetal
+import MetalFilters
+import VideoIO
 
-/// A video view that contains video layer, supports play, pause and other actions.
-/// Supports xib initialization.
 public class YPVideoView: UIView {
+    lazy var playerItemVideoOutput: AVPlayerItemVideoOutput = {
+        let attributes = [kCVPixelBufferPixelFormatTypeKey as String : Int(kCVPixelFormatType_32BGRA)]
+        return AVPlayerItemVideoOutput(pixelBufferAttributes: attributes)
+    }()
+    
+    lazy var displayLink: CADisplayLink = {
+        let dl = CADisplayLink(target: self, selector: #selector(readBuffer(_:)))
+        dl.add(to: .current, forMode: RunLoop.Mode.common)
+        dl.isPaused = true
+        return dl
+    }()
+    
+    var filter: MTFilter?
+    
+    fileprivate var videoPreviewView: MTIImageView?
+    
     public let playImageView = UIImageView(image: nil)
     
     internal let playerView = UIView()
     internal let playerLayer = AVPlayerLayer()
     internal var previewImageView = UIImageView()
     
+    private var asset: AVAsset?
+    private var videoComposition: VideoComposition<BlockBasedVideoCompositor>?
+    private let context = try! MTIContext(device: MTLCreateSystemDefaultDevice()!)
+    private let videoFilter = MT1977Filter()
+    
     public var player: AVPlayer {
         guard playerLayer.player != nil else {
             return AVPlayer()
         }
-        playImageView.image = YPConfig.icons.playImage
         return playerLayer.player!
     }
     
@@ -49,8 +72,8 @@ public class YPVideoView: UIView {
         playerView.alpha = 0
         playImageView.alpha = 0.8
         playerLayer.videoGravity = .resizeAspect
-        previewImageView.contentMode = .scaleAspectFit
-        
+        previewImageView.backgroundColor = .clear
+
         sv(
             previewImageView,
             playerView,
@@ -61,6 +84,14 @@ public class YPVideoView: UIView {
         playerView.fillContainer()
         playImageView.centerInContainer()
         playerView.layer.addSublayer(playerLayer)
+        playImageView.image = YPConfig.icons.playImage
+        
+        self.showPlayImage(show: true)
+        
+        DispatchQueue.main.async {
+            self.setupVideoPreviewView()
+        }
+        
     }
     
     override public func layoutSubviews() {
@@ -77,6 +108,30 @@ public class YPVideoView: UIView {
         player.seek(to: CMTime.zero)
         player.play()
     }
+    
+    @objc private func readBuffer(_ sender: CADisplayLink) {
+        var currentTime = CMTime.invalid
+        let nextVSync = sender.timestamp + sender.duration
+        currentTime = self.playerItemVideoOutput.itemTime(forHostTime: nextVSync)
+        
+        if self.playerItemVideoOutput.hasNewPixelBuffer(forItemTime: currentTime), let pixelBuffer = self.playerItemVideoOutput.copyPixelBuffer(forItemTime: currentTime, itemTimeForDisplay: nil) {
+            self.videoFilterPlay(cvImageBuffer: pixelBuffer)
+        }
+    }
+    
+    func stopDisplayLink() {
+        displayLink.invalidate()
+    }
+    
+    func setupVideoPreviewView() {
+        videoPreviewView = MTIImageView(frame: self.playerView.frame)
+        if let videoPreviewView = videoPreviewView {
+            videoPreviewView.frame = self.playerView.bounds
+            videoPreviewView.isUserInteractionEnabled = false
+            self.insertSubview(videoPreviewView, belowSubview: playImageView)
+        }
+    }
+     
 }
 
 // MARK: - Video handling
@@ -84,21 +139,35 @@ extension YPVideoView {
     /// The main load video method
     public func loadVideo<T>(_ item: T) {
         var player: AVPlayer
-        
+        var playerItem: AVPlayerItem!
         switch item.self {
         case let video as YPMediaVideo:
             player = AVPlayer(url: video.url)
+            let asset = AVURLAsset(url: video.url)
+            playerItem = AVPlayerItem(asset: asset)
         case let url as URL:
             player = AVPlayer(url: url)
-        case let playerItem as AVPlayerItem:
+            let asset = AVURLAsset(url: url)
+            playerItem = AVPlayerItem(asset: asset)
+        case let aPlayerItem as AVPlayerItem:
             player = AVPlayer(playerItem: playerItem)
+            playerItem = aPlayerItem
         default:
             return
         }
-        
+    
         playerLayer.player = player
+        
+        // Add the player item video output to the player item.
+        playerItem.add(playerItemVideoOutput)
+         
+        // Add the player item to the player.
+        playerLayer.player?.replaceCurrentItem(with: playerItem)
+        
         playerView.alpha = 1
         setNeedsLayout()
+
+        pauseUnpause()
     }
     
     /// Convenience func to pause or unpause video dependely of state
@@ -113,6 +182,7 @@ extension YPVideoView {
     
     public func play() {
         player.play()
+        displayLink.isPaused = false
         showPlayImage(show: false)
         addReachEndObserver()
     }
@@ -132,6 +202,18 @@ extension YPVideoView {
     public func deallocate() {
         playerLayer.player = nil
         playImageView.image = nil
+    }
+    
+    func videoFilterPlay(cvImageBuffer: CVImageBuffer) {
+        let sourceImage = CIImage(cvImageBuffer: cvImageBuffer)
+        let inputImage = MTIImage(ciImage: sourceImage, isOpaque: true)
+        filter?.inputImage = inputImage
+        
+        guard let outputImage = filter?.outputImage else{
+            videoPreviewView?.image = inputImage
+            return
+        }
+        videoPreviewView?.image = outputImage
     }
 }
 
