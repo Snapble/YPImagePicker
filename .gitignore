@@ -14,7 +14,6 @@ build/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata
 *.xccheckout
 profile
 *.moved-aside
@@ -26,7 +25,7 @@ DerivedData
 .bundle
 
 # Carthage
-Carthage/Build/tvOS/
+Carthage/
 Carthage/Checkouts
 Carthage/Build/iOS/*.dSYM
 

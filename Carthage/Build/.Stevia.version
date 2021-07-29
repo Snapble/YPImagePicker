@@ -1,25 +1,19 @@
 {
-  "Mac" : [
-
-  ],
-  "watchOS" : [
-
-  ],
-  "tvOS" : [
-    {
-      "hash" : "80924c31e50d10aa988cca03ff3536edefdd5a0a212bf595a30637618d6c8760",
-      "name" : "Stevia",
-      "linking" : "dynamic",
-      "swiftToolchainVersion" : "5.3 (swiftlang-1200.0.29.2 clang-1200.0.30.1)"
-    }
-  ],
   "commitish" : "4.7.3",
   "iOS" : [
     {
-      "hash" : "d307c9164c400a6a8c6a8331f797d686fd637d7a67647afe949e02c8009e7b84",
+      "swiftToolchainVersion" : "5.4 (swiftlang-1205.0.26.9 clang-1205.0.19.55)",
+      "hash" : "0198292446ff1ca04f1be5c5e71a1ecceae81447cb65d43645e0b36f4a16e295",
       "name" : "Stevia",
-      "linking" : "dynamic",
-      "swiftToolchainVersion" : "5.3 (swiftlang-1200.0.29.2 clang-1200.0.30.1)"
+      "container" : "Stevia.xcframework",
+      "identifier" : "ios-arm64_i386_x86_64-simulator"
+    },
+    {
+      "swiftToolchainVersion" : "5.4 (swiftlang-1205.0.26.9 clang-1205.0.19.55)",
+      "hash" : "76d4e1cbfcf2b87a312515fe0476288de05114cee8d6120fc92c193fbdf72d6d",
+      "name" : "Stevia",
+      "container" : "Stevia.xcframework",
+      "identifier" : "ios-arm64_armv7"
     }
   ]
 }

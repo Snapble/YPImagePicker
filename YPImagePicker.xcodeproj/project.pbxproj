@@ -3,10 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		275A149626B3072F00EC7A8A /* MetalFilters.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 275A149326B3072F00EC7A8A /* MetalFilters.xcframework */; };
+		275A149726B3072F00EC7A8A /* PryntTrimmerView.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 275A149426B3072F00EC7A8A /* PryntTrimmerView.xcframework */; };
+		275A149826B3072F00EC7A8A /* Stevia.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 275A149526B3072F00EC7A8A /* Stevia.xcframework */; };
 		321E6D87240CFABC00D76CD8 /* UINavigationBar+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321E6D86240CFABC00D76CD8 /* UINavigationBar+Extensions.swift */; };
 		327D7B592409510300B9C368 /* YPFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327D7B582409510300B9C368 /* YPFonts.swift */; };
 		327D7B69240CEF2F00B9C368 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327D7B68240CEF2F00B9C368 /* UIBarButtonItem+Extensions.swift */; };
@@ -102,6 +105,9 @@
 		166695DE253EFF0100F6EF9E /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		2577138123B1E09300BB9C86 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
 		2577138223B1E09E00BB9C86 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/YPImagePickerLocalizable.strings; sourceTree = "<group>"; };
+		275A149326B3072F00EC7A8A /* MetalFilters.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MetalFilters.xcframework; path = Carthage/Build/MetalFilters.xcframework; sourceTree = "<group>"; };
+		275A149426B3072F00EC7A8A /* PryntTrimmerView.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PryntTrimmerView.xcframework; path = Carthage/Build/PryntTrimmerView.xcframework; sourceTree = "<group>"; };
+		275A149526B3072F00EC7A8A /* Stevia.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Stevia.xcframework; path = Carthage/Build/Stevia.xcframework; sourceTree = "<group>"; };
 		321E6D86240CFABC00D76CD8 /* UINavigationBar+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationBar+Extensions.swift"; sourceTree = "<group>"; };
 		327D7B582409510300B9C368 /* YPFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YPFonts.swift; sourceTree = "<group>"; };
 		327D7B68240CEF2F00B9C368 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
@@ -222,6 +228,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				275A149626B3072F00EC7A8A /* MetalFilters.xcframework in Frameworks */,
+				275A149826B3072F00EC7A8A /* Stevia.xcframework in Frameworks */,
+				275A149726B3072F00EC7A8A /* PryntTrimmerView.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,6 +404,9 @@
 		EB3251DE20878D5900A6190D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				275A149326B3072F00EC7A8A /* MetalFilters.xcframework */,
+				275A149426B3072F00EC7A8A /* PryntTrimmerView.xcframework */,
+				275A149526B3072F00EC7A8A /* Stevia.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -844,7 +856,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -874,7 +887,11 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MARKETING_VERSION = 4.5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yummypets.YPImagePicker;
@@ -908,7 +925,11 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MARKETING_VERSION = 4.5.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yummypets.YPImagePicker;
