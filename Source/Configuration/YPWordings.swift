@@ -21,27 +21,27 @@ public struct YPWordings {
     }
     
     public struct VideoDurationPopup {
-        public var title = "text_video_duration_title"
-        public var tooShortMessage = "text_video_too_short"
-        public var tooLongMessage = "text_video_too_long"
+        public var title = L10n.ypImagePickerVideoDurationTitle
+        public var tooShortMessage = L10n.ypImagePickerVideoTooShort(5)
+        public var tooLongMessage = L10n.ypImagePickerVideoTooLong(300)
     }
     
-    public var ok =  "text_button_ok"
-    public var done =  "text_done"
-    public var cancel = "text_button_cancel"
-    public var save = "text_button_save"
-    public var processing = "text_processing"
-    public var trim = "text_video_trim"
-    public var cover = "text_video_cover_image"
-    public var albumsTitle = "text_photo_library"
-    public var libraryTitle = "text_photo_library"
-    public var cameraTitle = "text_photo"
-    public var videoTitle = "text_video"
-    public var next = "text_button_next"
-    public var filter = "text_button_filters"
-    public var crop = "text_button_crop"
-    public var warningMaxItemsLimit = ypLocalized("YPImagePickerWarningItemsLimit")
-    public var warningNoMedia = "text_warning_no_media"
-    public var takePhoto = "text_button_take_photo"
-    public var edit = "text_action_edit"
+    public var ok =  L10n.ypImagePickerOk
+    public var done =  L10n.ypImagePickerDone
+    public var cancel = L10n.ypImagePickerCancel
+    public var save = L10n.ypImagePickerSave
+    public var processing = L10n.ypImagePickerProcessing
+    public var trim = L10n.ypImagePickerTrim
+    public var cover = L10n.ypImagePickerCover
+    public var albumsTitle = L10n.ypImagePickerAlbums
+    public var libraryTitle = L10n.ypImagePickerLibrary
+    public var cameraTitle = L10n.ypImagePickerPhoto
+    public var videoTitle = L10n.ypImagePickerVideo
+    public var next = L10n.ypImagePickerNext
+    public var filter = L10n.ypImagePickerFilter
+    public var crop = L10n.ypImagePickerCrop
+    public var warningMaxItemsLimit = L10n.ypImagePickerWarningItemsLimit(10)
+    public var warningNoMedia = L10n.ypImagePickerWarningNoMedia
+    public var takePhoto = L10n.ypImagePickerTakePhoto
+    public var edit = L10n.ypImagePickerEdit
 }

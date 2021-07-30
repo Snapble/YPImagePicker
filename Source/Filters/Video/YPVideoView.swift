@@ -12,8 +12,6 @@ import AVFoundation
 import GLKit
 import Photos
 import MetalPetal
-import MetalFilters
-import VideoIO
 
 public class YPVideoView: UIView {
     lazy var playerItemVideoOutput: AVPlayerItemVideoOutput = {
