@@ -115,4 +115,11 @@ internal extension UIImage {
     func toCIImage() -> CIImage? {
         return self.ciImage ?? CIImage(cgImage: self.cgImage!)
     }
+    
+    func cropImage(toRect rect:CGRect) -> UIImage? {
+        guard let imageRef = self.cgImage?.cropping(to: rect) else {return nil}
+        let cropped = UIImage(cgImage:imageRef)
+        return cropped
+    }
+    
 }

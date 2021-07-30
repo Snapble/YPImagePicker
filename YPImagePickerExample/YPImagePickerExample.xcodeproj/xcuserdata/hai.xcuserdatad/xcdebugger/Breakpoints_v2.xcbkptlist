@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "7BD68C6D-2F14-43E6-B8CD-AF1C8597F1A6"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "116D0AC5-222D-469C-A3B6-A36C4FC5AA8D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../Source/Filters/Video/YPVideoFiltersVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "04D1B6CC-7833-48E4-B171-3691A88F649A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../Source/Filters/Video/YPVideoFiltersVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "177"
+            endingLineNumber = "177"
+            landmarkName = "save()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ED34117B-9581-46D0-9B5F-B33C1FD15C67"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../Source/Filters/Video/YPVideoFiltersVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
+            landmarkName = "save()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "ED34117B-9581-46D0-9B5F-B33C1FD15C67 - 2c05d71cee6e591b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "YPImagePicker.YPVideoFiltersVC.save() -&gt; ()"
+                  moduleName = "YPImagePicker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hai/workspace/hai_bak/YPImagePicker/Source/Filters/Video/YPVideoFiltersVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "205"
+                  endingLineNumber = "205"
+                  offsetFromSymbolStart = "3028">
+               </Location>
+               <Location
+                  uuid = "ED34117B-9581-46D0-9B5F-B33C1FD15C67 - 9db0ec0f30d5a925"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "implicit closure #4 (MetalPetal.MTIMutableVideoCompositionRequest) -&gt; () in implicit closure #3 (MetalPetal.MTIAsyncVideoCompositionRequestHandler) -&gt; (MetalPetal.MTIMutableVideoCompositionRequest) -&gt; () in YPImagePicker.YPVideoFiltersVC.save() -&gt; ()"
+                  moduleName = "YPImagePicker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/hai/workspace/hai_bak/YPImagePicker/Source/Filters/Video/YPVideoFiltersVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "205"
+                  endingLineNumber = "205"
+                  offsetFromSymbolStart = "32">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

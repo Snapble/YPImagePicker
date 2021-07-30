@@ -21,6 +21,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     var shouldHideStatusBar = false
     var initialStatusBarHidden = false
     weak var imagePickerDelegate: ImagePickerDelegate?
+    let semaphore = DispatchSemaphore(value: 1)
     
     override open var prefersStatusBarHidden: Bool {
         return (shouldHideStatusBar || initialStatusBarHidden) && YPConfig.hidesStatusBar
@@ -168,9 +169,9 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         if let vc = vc as? YPLibraryVC {
             vc.checkPermission()
         } else if let cameraVC = vc as? YPCameraVC {
-            cameraVC.start()
+            cameraVC.start(semaphore: semaphore)
         } else if let videoVC = vc as? YPVideoCaptureVC {
-            videoVC.start()
+            videoVC.start(semaphore: semaphore)
         }
     
         updateUI()
@@ -181,9 +182,9 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
         case .library:
             libraryVC?.pausePlayer()
         case .camera:
-            cameraVC?.stopCamera()
+            cameraVC?.stopCamera(semaphore)
         case .video:
-            videoVC?.stopCamera()
+            videoVC?.stopCamera(semaphore)
         }
     }
     
@@ -260,13 +261,13 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     }
     
     func updateUI() {
-		if !YPConfig.hidesCancelButton {
-			// Update Nav Bar state.
-			navigationItem.leftBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.cancel,
+        if !YPConfig.hidesCancelButton {
+            // Update Nav Bar state.
+            navigationItem.leftBarButtonItem = UIBarButtonItem(title: YPConfig.wordings.cancel,
                                                            style: .plain,
                                                            target: self,
                                                            action: #selector(close))
-		}
+        }
         switch mode {
         case .library:
             setTitleViewWithTitle(aTitle: libraryVC?.title ?? "")
@@ -278,7 +279,7 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
 
             // Disable Next Button until minNumberOfItems is reached.
             navigationItem.rightBarButtonItem?.isEnabled =
-				libraryVC!.selection.count >= YPConfig.library.minNumberOfItems
+                libraryVC!.selection.count >= YPConfig.library.minNumberOfItems
 
         case .camera:
             navigationItem.titleView = nil
@@ -325,8 +326,8 @@ open class YPPickerVC: YPBottomPager, YPBottomPagerDelegate {
     
     func stopAll() {
         libraryVC?.v.assetZoomableView.videoView.deallocate()
-        videoVC?.stopCamera()
-        cameraVC?.stopCamera()
+        videoVC?.stopCamera(nil)
+        cameraVC?.stopCamera(nil)
     }
 }
 
@@ -370,9 +371,8 @@ extension YPPickerVC: YPLibraryViewDelegate {
     }
     
     public func noPhotosForOptions() {
-        self.dismiss(animated: true) {
-            self.imagePickerDelegate?.noPhotos()
-        }
+        // When gallery doesn't have any photo => change to camera phot
+        showPage(1)
     }
     
     public func libraryViewShouldAddToSelection(indexPath: IndexPath, numSelections: Int) -> Bool {

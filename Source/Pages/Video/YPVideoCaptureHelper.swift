@@ -32,7 +32,7 @@ class YPVideoCaptureHelper: NSObject {
     
     // MARK: - Init
     
-    public func start(previewView: UIView, withVideoRecordingLimit: TimeInterval, completion: @escaping () -> Void) {
+    public func start(semaphore: DispatchSemaphore?, previewView: UIView, withVideoRecordingLimit: TimeInterval, completion: @escaping () -> Void) {
         self.previewView = previewView
         self.videoRecordingTimeLimit = withVideoRecordingLimit
         sessionQueue.async { [weak self] in
@@ -42,7 +42,7 @@ class YPVideoCaptureHelper: NSObject {
             if !strongSelf.isCaptureSessionSetup {
                 strongSelf.setupCaptureSession()
             }
-            strongSelf.startCamera(completion: {
+            strongSelf.startCamera(semaphore: semaphore, completion: {
                 completion()
             })
         }
@@ -50,7 +50,7 @@ class YPVideoCaptureHelper: NSObject {
     
     // MARK: - Start Camera
     
-    public func startCamera(completion: @escaping (() -> Void)) {
+    public func startCamera(semaphore: DispatchSemaphore?, completion: @escaping (() -> Void)) {
         if !session.isRunning {
             sessionQueue.async { [weak self] in
                 // Re-apply session preset
@@ -60,9 +60,11 @@ class YPVideoCaptureHelper: NSObject {
                 case .notDetermined, .restricted, .denied:
                     self?.session.stopRunning()
                 case .authorized:
+                    semaphore?.wait()
                     self?.session.startRunning()
                     completion()
                     self?.tryToSetupPreview()
+                    semaphore?.signal()
                 @unknown default:
                     fatalError()
                 }
@@ -116,43 +118,45 @@ class YPVideoCaptureHelper: NSObject {
     // MARK: - Zoom
     
     public func zoom(began: Bool, scale: CGFloat) {
-        guard let device = videoInput?.device else {
-            return
-        }
-
-        if began {
-            initVideoZoomFactor = device.videoZoomFactor
-            return
-        }
-
-        do {
-            try device.lockForConfiguration()
-            defer { device.unlockForConfiguration() }
-
-            var minAvailableVideoZoomFactor: CGFloat = 1.0
-            if #available(iOS 11.0, *) {
-                minAvailableVideoZoomFactor = device.minAvailableVideoZoomFactor
-            }
-            var maxAvailableVideoZoomFactor: CGFloat = device.activeFormat.videoMaxZoomFactor
-            if #available(iOS 11.0, *) {
-                maxAvailableVideoZoomFactor = device.maxAvailableVideoZoomFactor
-            }
-            maxAvailableVideoZoomFactor = min(maxAvailableVideoZoomFactor, YPConfig.maxCameraZoomFactor)
-
-            let desiredZoomFactor = initVideoZoomFactor * scale
-            device.videoZoomFactor = max(minAvailableVideoZoomFactor,
-                                         min(desiredZoomFactor, maxAvailableVideoZoomFactor))
-        } catch let error {
-            print("💩 \(error)")
-        }
+       guard let device = videoInput?.device else {
+           return
+       }
+       
+       if began {
+           initVideoZoomFactor = device.videoZoomFactor
+           return
+       }
+       
+       do {
+           try device.lockForConfiguration()
+           defer { device.unlockForConfiguration() }
+           
+           var minAvailableVideoZoomFactor: CGFloat = 1.0
+           if #available(iOS 11.0, *) {
+               minAvailableVideoZoomFactor = device.minAvailableVideoZoomFactor
+           }
+           var maxAvailableVideoZoomFactor: CGFloat = device.activeFormat.videoMaxZoomFactor
+           if #available(iOS 11.0, *) {
+               maxAvailableVideoZoomFactor = device.maxAvailableVideoZoomFactor
+           }
+           maxAvailableVideoZoomFactor = min(maxAvailableVideoZoomFactor, YPConfig.maxCameraZoomFactor)
+           
+           let desiredZoomFactor = initVideoZoomFactor * scale
+           device.videoZoomFactor = max(minAvailableVideoZoomFactor,
+                                        min(desiredZoomFactor, maxAvailableVideoZoomFactor))
+       } catch let error {
+          print("💩 \(error)")
+       }
     }
     
     // MARK: - Stop Camera
     
-    public func stopCamera() {
+    public func stopCamera(_ semaphore: DispatchSemaphore?) {
         if session.isRunning {
             sessionQueue.async { [weak self] in
+                semaphore?.wait()
                 self?.session.stopRunning()
+                semaphore?.signal()
             }
         }
     }
@@ -182,7 +186,7 @@ class YPVideoCaptureHelper: NSObject {
     public func startRecording() {
         
         let outputURL = YPVideoProcessor.makeVideoPathURL(temporaryFolder: true, fileName: "recordedVideoRAW")
-
+        
         checkOrientation { [weak self] orientation in
             guard let strongSelf = self else {
                 return
@@ -227,12 +231,8 @@ class YPVideoCaptureHelper: NSObject {
             let maxDuration =
                 CMTimeMakeWithSeconds(self.videoRecordingTimeLimit, preferredTimescale: timeScale)
             videoOutput.maxRecordedDuration = maxDuration
-            if let sizeLimit = YPConfig.video.recordingSizeLimit {
-                videoOutput.maxRecordedFileSize = sizeLimit
-            }
-            videoOutput.minFreeDiskSpaceLimit = YPConfig.video.minFreeDiskSpaceLimit
-            if YPConfig.video.fileType == .mp4,
-               YPConfig.video.recordingSizeLimit != nil {
+            videoOutput.minFreeDiskSpaceLimit = 1024 * 1024
+            if YPConfig.video.fileType == .mp4 {
                 videoOutput.movieFragmentInterval = .invalid // Allows audio for MP4s over 10 seconds.
             }
             if session.canAddOutput(videoOutput) {
@@ -249,13 +249,7 @@ class YPVideoCaptureHelper: NSObject {
     @objc
     func tick() {
         let timeElapsed = Date().timeIntervalSince(dateVideoStarted)
-        var progress: Float
-        if let recordingSizeLimit = YPConfig.video.recordingSizeLimit {
-            progress = Float(videoOutput.recordedFileSize) / Float(recordingSizeLimit)
-        } else {
-            progress = Float(timeElapsed) / Float(videoRecordingTimeLimit)
-        }
-        // VideoOutput configuration is responsible for stopping the recording. Not here.
+        let progress: Float = Float(timeElapsed) / Float(videoRecordingTimeLimit)
         DispatchQueue.main.async {
             self.videoRecordingProgress?(progress, timeElapsed)
         }
@@ -317,17 +311,9 @@ extension YPVideoCaptureHelper: AVCaptureFileOutputRecordingDelegate {
                            didFinishRecordingTo outputFileURL: URL,
                            from connections: [AVCaptureConnection],
                            error: Error?) {
-        if let error = error {
-            print(error)
-        }
-
-        if YPConfig.onlySquareImagesFromCamera {
-            YPVideoProcessor.cropToSquare(filePath: outputFileURL) { [weak self] url in
-                guard let _self = self, let u = url else { return }
-                _self.didCaptureVideo?(u)
-            }
-        } else {
-            self.didCaptureVideo?(outputFileURL)
+        YPVideoProcessor.cropToSquare(filePath: outputFileURL) { [weak self] url in
+            guard let _self = self, let u = url else { return }
+            _self.didCaptureVideo?(u)
         }
         timer.invalidate()
     }

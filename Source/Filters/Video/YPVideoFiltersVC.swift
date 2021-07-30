@@ -10,8 +10,8 @@ import UIKit
 import Photos
 import PryntTrimmerView
 import MetalPetal
-import MetalFilters
 import VideoIO
+import MetalFilters
 
 public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
     
@@ -192,14 +192,12 @@ public class YPVideoFiltersVC: UIViewController, IsMediaFilterVC {
             try? fileManager.removeItem(at: outputURL)
             
             if let filter = selectedFilter {
-                let handler = MTIAsyncVideoCompositionRequestHandler(context: context, tracks: trimmedAsset.tracks(withMediaType: .video)) { [weak self] request in
+                let handler: VideoIO.MTIAsyncVideoCompositionRequestHandler = MTIAsyncVideoCompositionRequestHandler(context: context, tracks: trimmedAsset.tracks(withMediaType: .video)) { [weak self] request in
                     guard self != nil else {
-                        //TODO: resolve force unwrap
-                        return request.anySourceImage!
+                        return request.anySourceImage
                     }
                     return FilterGraph.makeImage { output in
-                        //TODO: resolve force unwrap
-                        request.anySourceImage! => filter => output
+                        request.anySourceImage => filter => output
                         }!
                 }
                 let composition = VideoComposition(propertiesOf: asset, compositionRequestHandler: handler.handle(request:))

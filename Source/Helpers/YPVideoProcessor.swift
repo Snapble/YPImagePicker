@@ -62,10 +62,12 @@ class YPVideoProcessor {
         composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
         
         // Prevent crash if tracks is empty
-        guard asset.tracks.isEmpty == false,
-              let clipVideoTrack = asset.tracks(withMediaType: .video).first else {
+        if asset.tracks.isEmpty {
             return
         }
+        
+        // input clip
+        let clipVideoTrack = asset.tracks(withMediaType: .video)[0]
         
         // make it square
         let videoComposition = AVMutableVideoComposition()

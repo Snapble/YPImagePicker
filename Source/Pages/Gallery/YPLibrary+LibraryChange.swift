@@ -17,6 +17,9 @@ extension YPLibraryVC: PHPhotoLibraryChangeObserver {
     public func photoLibraryDidChange(_ changeInstance: PHChange) {
         DispatchQueue.main.async {
             let fetchResult = self.mediaManager.fetchResult!
+            self.v.assetZoomableView.isHidden = (fetchResult.count == 0)
+            self.v.assetViewContainer.isHidden = (fetchResult.count == 0)
+            self.v.noPhotoViewContainer.isHidden = !(fetchResult.count == 0)
             let collectionChanges = changeInstance.changeDetails(for: fetchResult)
             if collectionChanges != nil {
                 self.mediaManager.fetchResult = collectionChanges!.fetchResultAfterChanges

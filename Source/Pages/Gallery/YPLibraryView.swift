@@ -10,6 +10,27 @@ import UIKit
 import Stevia
 import Photos
 
+extension UIFont {
+    class var semiTitle16Pt: UIFont {
+        return UIFont.systemFont(ofSize: 16.0, weight: .semibold)
+    }
+}
+
+extension UIButton {
+    
+    func setText(_ text: String?, font: UIFont?, color: UIColor? = nil, for state: UIButton.State = .normal) {
+        if let font = font {
+            self.titleLabel?.font = font
+        }
+        if let color = color {
+            self.setTitleColor(color, for: state)
+        }
+        if let text = text {
+            self.setTitle(text, for: state)
+        }
+    }
+}
+
 final class YPLibraryView: UIView {
     
     let assetZoomableViewMinimalVisibleHeight: CGFloat  = 50
@@ -18,12 +39,17 @@ final class YPLibraryView: UIView {
     @IBOutlet weak var assetZoomableView: YPAssetZoomableView!
     @IBOutlet weak var assetViewContainer: YPAssetViewContainer!
     @IBOutlet weak var assetViewContainerConstraintTop: NSLayoutConstraint!
+    @IBOutlet weak var noPhotoViewContainer: UIView!
+    @IBOutlet weak var noPhotoLabel: UILabel!
+    @IBOutlet weak var makePhotoButton: UIButton!
     
     let maxNumberWarningView = UIView()
     let maxNumberWarningLabel = UILabel()
     let progressView = UIProgressView()
     let line = UIView()
     var shouldShowLoader = false
+    
+    var makePhotoAction: (() -> ())?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -38,6 +64,8 @@ final class YPLibraryView: UIView {
         )
         
         line.backgroundColor = .ypSystemBackground
+        noPhotoLabel.text = YPConfig.wordings.warningNoMedia
+        makePhotoButton.setText(YPConfig.wordings.takePhoto, font: UIFont.semiTitle16Pt)
         
         setupMaxNumberOfItemsView()
         setupProgressBarView()
@@ -83,6 +111,12 @@ final class YPLibraryView: UIView {
         progressView.isHidden = true
         progressView.isUserInteractionEnabled = false
     }
+    
+    // Action
+    @IBAction func onBtnMakePhoto(_ sender: Any) {
+        makePhotoAction?()
+    }
+    
 }
 
 // MARK: - UI Helpers

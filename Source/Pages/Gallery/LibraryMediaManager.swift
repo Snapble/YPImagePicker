@@ -18,15 +18,6 @@ class LibraryMediaManager {
     internal var imageManager: PHCachingImageManager?
     internal var exportTimer: Timer?
     internal var currentExportSessions: [AVAssetExportSession] = []
-
-    /// If true then library has items to show. If false the user didn't allow any item to show in picker library.
-    internal var hasResultItems: Bool {
-        if let fetchResult = self.fetchResult {
-            return fetchResult.count > 0
-        } else {
-            return false
-        }
-    }
     
     func initialize() {
         imageManager = PHCachingImageManager()
@@ -85,26 +76,38 @@ class LibraryMediaManager {
                                           cropRect: CGRect,
                                           duration: CMTime?,
                                           callback: @escaping (_ videoURL: URL?) -> Void) {
+        
+//        let options: PHVideoRequestOptions = PHVideoRequestOptions()
+//        options.version = .original
+//        PHImageManager.default().requestAVAsset(forVideo: videoAsset, options: options, resultHandler: {(asset: AVAsset?, audioMix: AVAudioMix?, info: [AnyHashable : Any]?) -> Void in
+//            if let urlAsset = asset as? AVURLAsset {
+//                let localVideoUrl: URL = urlAsset.url as URL
+//                callback(localVideoUrl)
+//            } else {
+//                callback(nil)
+//            }
+//        })
+        
         let videosOptions = PHVideoRequestOptions()
         videosOptions.isNetworkAccessAllowed = true
         videosOptions.deliveryMode = .highQualityFormat
         imageManager?.requestAVAsset(forVideo: videoAsset, options: videosOptions) { asset, _, _ in
             do {
                 guard let asset = asset else { print("⚠️ PHCachingImageManager >>> Don't have the asset"); return }
-                
+
                 let assetComposition = AVMutableComposition()
                 let assetMaxDuration = self.getMaxVideoDuration(between: duration, andAssetDuration: asset.duration)
                 let trackTimeRange = CMTimeRangeMake(start: CMTime.zero, duration: assetMaxDuration)
-                
+
                 // 1. Inserting audio and video tracks in composition
-                
+
                 guard let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first,
                     let videoCompositionTrack = assetComposition
                         .addMutableTrack(withMediaType: .video,
                                          preferredTrackID: kCMPersistentTrackID_Invalid) else {
                                             print("⚠️ PHCachingImageManager >>> Problems with video track")
                                             return
-                                            
+
                 }
                 if let audioTrack = asset.tracks(withMediaType: AVMediaType.audio).first,
                     let audioCompositionTrack = assetComposition
@@ -112,9 +115,9 @@ class LibraryMediaManager {
                                          preferredTrackID: kCMPersistentTrackID_Invalid) {
                     try audioCompositionTrack.insertTimeRange(trackTimeRange, of: audioTrack, at: CMTime.zero)
                 }
-                
+
                 try videoCompositionTrack.insertTimeRange(trackTimeRange, of: videoTrack, at: CMTime.zero)
-                
+
                 // Layer Instructions
                 let layerInstructions = AVMutableVideoCompositionLayerInstruction(assetTrack: videoCompositionTrack)
                 var transform = videoTrack.preferredTransform
@@ -124,20 +127,19 @@ class LibraryMediaManager {
                 transform.tx -= cropRect.minX
                 transform.ty -= cropRect.minY
                 layerInstructions.setTransform(transform, at: CMTime.zero)
-                videoCompositionTrack.preferredTransform = transform
-                
+
                 // CompositionInstruction
                 let mainInstructions = AVMutableVideoCompositionInstruction()
                 mainInstructions.timeRange = trackTimeRange
                 mainInstructions.layerInstructions = [layerInstructions]
-                
+
                 // Video Composition
                 let videoComposition = AVMutableVideoComposition(propertiesOf: asset)
                 videoComposition.instructions = [mainInstructions]
                 videoComposition.renderSize = cropRect.size // needed?
-                
+
                 // 5. Configuring export session
-                
+
                 let fileURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     .appendingUniquePathComponent(pathExtension: YPConfig.video.fileType.fileExtension)
                 let exportSession = assetComposition

@@ -95,44 +95,14 @@ override open func viewDidLoad() {
             let item = items.first!
             switch item {
             case .photo(let photo):
-                let completion = { (photo: YPMediaPhoto) in
-                    let mediaItem = YPMediaItem.photo(p: photo)
-                    // Save new image or existing but modified, to the photo album.
-                    if YPConfig.shouldSaveNewPicturesToAlbum {
-                        let isModified = photo.modifiedImage != nil
-                        if photo.fromCamera || (!photo.fromCamera && isModified) {
-                            YPPhotoSaver.trySaveImage(photo.image, inAlbumNamed: YPConfig.albumName)
-                        }
-                    }
-                    self?.didSelect(items: [mediaItem])
+                let photoEditorViewController = PhotoEditorViewController(nibName: "PhotoEditorViewController", bundle: Bundle(for: YPImagePicker.self))
+                photoEditorViewController.originImage = photo.image
+                photoEditorViewController.didSave = { [weak self] outputMedia in
+                    print("Done edit photo \(outputMedia)")
+                    self?.didSelect(items: [outputMedia])
                 }
-                
-                func showCropVC(photo: YPMediaPhoto, completion: @escaping (_ aphoto: YPMediaPhoto) -> Void) {
-                    if case let YPCropType.rectangle(ratio) = YPConfig.showsCrop {
-                        let cropVC = YPCropVC(image: photo.image, ratio: ratio)
-                        cropVC.didFinishCropping = { croppedImage in
-                            photo.modifiedImage = croppedImage
-                            completion(photo)
-                        }
-                        self?.pushViewController(cropVC, animated: true)
-                    } else {
-                        completion(photo)
-                    }
-                }
-                
-                if YPConfig.showsPhotoFilters {
-                    let filterVC = YPPhotoFiltersVC(inputPhoto: photo,
-                                                    isFromSelectionVC: false)
-                    // Show filters and then crop
-                    filterVC.didSave = { outputMedia in
-                        if case let YPMediaItem.photo(outputPhoto) = outputMedia {
-                            showCropVC(photo: outputPhoto, completion: completion)
-                        }
-                    }
-                    self?.pushViewController(filterVC, animated: false)
-                } else {
-                    showCropVC(photo: photo, completion: completion)
-                }
+                self?.pushViewController(photoEditorViewController, animated: true)
+
             case .video(let video):
                 if YPConfig.showsVideoTrimmer {
                     let videoFiltersVC = YPVideoFiltersVC.initWith(video: video,

@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct YPAlert {
+public struct YPAlert {
     static func videoTooLongAlert(_ sourceView: UIView) -> UIAlertController {
         let msg = String(format: YPConfig.wordings.videoDurationPopup.tooLongMessage,
                          "\(YPConfig.video.libraryTimeLimit)")
