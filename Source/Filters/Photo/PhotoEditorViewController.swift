@@ -9,7 +9,6 @@
 import UIKit
 import Photos
 import MetalPetal
-import MetalFilters
 
 class PhotoEditorViewController: UIViewController, IsMediaFilterVC {
     

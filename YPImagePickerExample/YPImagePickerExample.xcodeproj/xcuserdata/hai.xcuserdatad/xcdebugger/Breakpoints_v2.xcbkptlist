@@ -7,52 +7,20 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "116D0AC5-222D-469C-A3B6-A36C4FC5AA8D"
-            shouldBeEnabled = "Yes"
+            uuid = "45E8D7C2-6583-4B53-BE80-76685D226D81"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../Source/Filters/Video/YPVideoFiltersVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
-            landmarkName = "viewDidLoad()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "04D1B6CC-7833-48E4-B171-3691A88F649A"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../Source/Filters/Video/YPVideoFiltersVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "177"
-            endingLineNumber = "177"
-            landmarkName = "save()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "ED34117B-9581-46D0-9B5F-B33C1FD15C67"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../Source/Filters/Video/YPVideoFiltersVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "205"
-            endingLineNumber = "205"
+            startingLineNumber = "198"
+            endingLineNumber = "198"
             landmarkName = "save()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "ED34117B-9581-46D0-9B5F-B33C1FD15C67 - 2c05d71cee6e591b"
+                  uuid = "45E8D7C2-6583-4B53-BE80-76685D226D81 - 2c05d71cee6e59fa"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -62,23 +30,23 @@
                   urlString = "file:///Users/hai/workspace/hai_bak/YPImagePicker/Source/Filters/Video/YPVideoFiltersVC.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "205"
-                  endingLineNumber = "205"
-                  offsetFromSymbolStart = "3028">
+                  startingLineNumber = "204"
+                  endingLineNumber = "204"
+                  offsetFromSymbolStart = "2932">
                </Location>
                <Location
-                  uuid = "ED34117B-9581-46D0-9B5F-B33C1FD15C67 - 9db0ec0f30d5a925"
+                  uuid = "45E8D7C2-6583-4B53-BE80-76685D226D81 - b6267a519c860c7a"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "implicit closure #4 (MetalPetal.MTIMutableVideoCompositionRequest) -&gt; () in implicit closure #3 (MetalPetal.MTIAsyncVideoCompositionRequestHandler) -&gt; (MetalPetal.MTIMutableVideoCompositionRequest) -&gt; () in YPImagePicker.YPVideoFiltersVC.save() -&gt; ()"
+                  symbolName = "implicit closure #4 (__C.AVAsynchronousVideoCompositionRequest) -&gt; () in implicit closure #3 (VideoIO.MTIAsyncVideoCompositionRequestHandler) -&gt; (__C.AVAsynchronousVideoCompositionRequest) -&gt; () in YPImagePicker.YPVideoFiltersVC.save() -&gt; ()"
                   moduleName = "YPImagePicker"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/hai/workspace/hai_bak/YPImagePicker/Source/Filters/Video/YPVideoFiltersVC.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "205"
-                  endingLineNumber = "205"
+                  startingLineNumber = "204"
+                  endingLineNumber = "204"
                   offsetFromSymbolStart = "32">
                </Location>
             </Locations>

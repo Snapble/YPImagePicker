@@ -9,10 +9,6 @@
 /* Begin PBXBuildFile section */
 		27665B4B26B3A2C1009E2901 /* MetalPetal in Frameworks */ = {isa = PBXBuildFile; productRef = 27665B4A26B3A2C1009E2901 /* MetalPetal */; };
 		27665B4D26B3A34D009E2901 /* FilterAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 27665B4C26B3A34D009E2901 /* FilterAssets.bundle */; };
-		27665B5926B3A88D009E2901 /* VideoIO.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27665B5526B3A88D009E2901 /* VideoIO.xcframework */; };
-		27665B5A26B3A88D009E2901 /* VideoIO.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 27665B5526B3A88D009E2901 /* VideoIO.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		27665B5B26B3A88D009E2901 /* MetalFilters.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27665B5626B3A88D009E2901 /* MetalFilters.xcframework */; };
-		27665B5C26B3A88D009E2901 /* MetalFilters.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 27665B5626B3A88D009E2901 /* MetalFilters.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		27665B5D26B3A88D009E2901 /* PryntTrimmerView.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27665B5726B3A88D009E2901 /* PryntTrimmerView.xcframework */; };
 		27665B5E26B3A88D009E2901 /* PryntTrimmerView.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 27665B5726B3A88D009E2901 /* PryntTrimmerView.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		27665B5F26B3A88D009E2901 /* Stevia.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27665B5826B3A88D009E2901 /* Stevia.xcframework */; };
@@ -44,8 +40,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				27665B5A26B3A88D009E2901 /* VideoIO.xcframework in Embed Frameworks */,
-				27665B5C26B3A88D009E2901 /* MetalFilters.xcframework in Embed Frameworks */,
 				27665B5E26B3A88D009E2901 /* PryntTrimmerView.xcframework in Embed Frameworks */,
 				27665B6026B3A88D009E2901 /* Stevia.xcframework in Embed Frameworks */,
 				27665CD626B3C9A0009E2901 /* YPImagePicker.framework in Embed Frameworks */,
@@ -57,8 +51,6 @@
 
 /* Begin PBXFileReference section */
 		27665B4C26B3A34D009E2901 /* FilterAssets.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FilterAssets.bundle; sourceTree = "<group>"; };
-		27665B5526B3A88D009E2901 /* VideoIO.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = VideoIO.xcframework; path = ../Carthage/Build/VideoIO.xcframework; sourceTree = "<group>"; };
-		27665B5626B3A88D009E2901 /* MetalFilters.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MetalFilters.xcframework; path = ../Carthage/Build/MetalFilters.xcframework; sourceTree = "<group>"; };
 		27665B5726B3A88D009E2901 /* PryntTrimmerView.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PryntTrimmerView.xcframework; path = ../Carthage/Build/PryntTrimmerView.xcframework; sourceTree = "<group>"; };
 		27665B5826B3A88D009E2901 /* Stevia.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Stevia.xcframework; path = ../Carthage/Build/Stevia.xcframework; sourceTree = "<group>"; };
 		27665CCF26B3C991009E2901 /* YPImagePicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = YPImagePicker.xcodeproj; path = ../YPImagePicker.xcodeproj; sourceTree = "<group>"; };
@@ -92,10 +84,8 @@
 			files = (
 				27665B4B26B3A2C1009E2901 /* MetalPetal in Frameworks */,
 				27665B5F26B3A88D009E2901 /* Stevia.xcframework in Frameworks */,
-				27665B5926B3A88D009E2901 /* VideoIO.xcframework in Frameworks */,
 				27665CD526B3C9A0009E2901 /* YPImagePicker.framework in Frameworks */,
 				27665B5D26B3A88D009E2901 /* PryntTrimmerView.xcframework in Frameworks */,
-				27665B5B26B3A88D009E2901 /* MetalFilters.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,8 +136,6 @@
 		99428A231E7BE17800B765A9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				27665B5526B3A88D009E2901 /* VideoIO.xcframework */,
-				27665B5626B3A88D009E2901 /* MetalFilters.xcframework */,
 				27665B5726B3A88D009E2901 /* PryntTrimmerView.xcframework */,
 				27665B5826B3A88D009E2901 /* Stevia.xcframework */,
 			);
